@@ -1,0 +1,35 @@
+{
+   "action_manifest_version" : 0,
+   "alias_info" : {},
+   "app_key" : "application.generated.unity.spacemouse.exe",
+   "bindings" : {
+      "/actions/default" : {
+         "poses" : [
+            {
+               "output" : "/actions/default/in/pose",
+               "path" : "/devices/htc/vive_trackerLHR-B925C963/pose/raw"
+            }
+         ],
+         "sources" : []
+      },
+      "/actions/mixedreality" : {
+         "haptics" : [],
+         "poses" : [
+            {
+               "output" : "/actions/mixedreality/in/ExternalCamera",
+               "path" : "/user/camera/pose/raw"
+            }
+         ],
+         "sources" : []
+      }
+   },
+   "category" : "steamvr_input",
+   "controller_type" : "vive_tracker_camera",
+   "description" : "",
+   "interaction_profile" : "",
+   "name" : "tracker_forcamera",
+   "options" : {
+      "simulated_controller_type" : "none"
+   },
+   "simulated_actions" : []
+}

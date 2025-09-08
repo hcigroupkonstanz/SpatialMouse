@@ -1,0 +1,61 @@
+pipeline {
+  agent {node "Build108"}
+  environment {
+    MSBUILD_PATH = "\"${tool 'visual_studio_default'}\""
+    BUILD_TOOLS_DIR = "BuildTools"
+  }
+  parameters {
+    string(name: 'HASH', description: 'Commit hash to build on. (Blank will build HEAD)')
+  }
+  stages {
+    // Need this stage since assembla script which comments on tickets is tracked on perforce
+    stage ("Build Tools Sync") {
+      steps {
+        dir ("./${BUILD_TOOLS_DIR}") {
+          checkout changelog: false, poll: false, scm: scmGit(
+            branches: [[name: '*/main']],
+            extensions: [cloneOption(noTags: false, reference: '', shallow: true)],
+            userRemoteConfigs: [[credentialsId: 'm_github', url: 'git@github.com:TrackIR/BuildTools.git']]
+            )
+        }
+      }
+    }
+    stage ("Notify Assembla of Commit") {
+      when {
+        not {
+          expression {
+            return currentBuild.changeSets.isEmpty();
+          }
+        }
+      }
+      environment {
+        SECRET_FILE = credentials('Assembla_autobuilds')
+      }
+      steps {
+        bat "python ${BUILD_TOOLS_DIR}/assembla.py --dir=${WORKSPACE} --sha=${GIT_COMMIT} --branch=${GIT_BRANCH}"
+      }
+    }
+    stage ("Commit Checkout") {
+      when {
+        expression {
+          return params.HASH != ''
+        }
+      }
+      steps {
+        checkout scmGit(branches: [[name: "${params.HASH}"]], extensions: [], userRemoteConfigs: [])
+      }
+    }
+  }
+
+  // email commit author(s) on failure
+  post {
+    failure {
+      emailext body: '${JOB_NAME} - ${GIT_REVISION} - ${BUILD_STATUS}:\nCheck console output at ${BUILD_URL} to view the results.\n\n${BUILD_LOG}',
+      recipientProviders: [brokenBuildSuspects()],
+      subject: '${JOB_NAME} - ${GIT_REVISION} - ${BUILD_STATUS}!'
+    }
+    cleanup {
+      cleanWs()
+    }
+  }
+}
