@@ -9,7 +9,7 @@
         •
       <a href="https://www.youtube.com/watch?v=vRS1W8I82Qw">Video</a>
         •
-      <a href="https://kops.uni-konstanz.de/entities/publication/2caa3c3d-b49c-442c-b199-ba38d5cc916e">Hybrid Mixed Reality Input Devices</a>
+      <a href="https://kops.uni-konstanz.de/entities/publication/2caa3c3d-b49c-442c-b199-ba38d5cc916e">Hybrid Cross-Reality Input Devices</a>
     </strong>
 </p>
 
